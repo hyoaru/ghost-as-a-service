@@ -44,6 +44,7 @@ project/
 │   └── services/    # Core service logic for excuse generation
 ├── tests/
 │   ├── utilities/    # Unit tests for the Lambda function
+│   ├── repositories/    # Unit tests for data access layer
 │   └── services/    # Unit tests for service logic
 ├── Dockerfile    # Dockerfile for local development
 ├── docker-compose.yml    # Docker Compose configuration
