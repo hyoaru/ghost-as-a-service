@@ -48,7 +48,7 @@ class TestExcuseAgentExecution:
     async def test_execute_delegates_to_operation(self, excuse_agent):
         """Test execute method properly delegates to operation."""
         # Arrange
-        operation = GenerateVague()
+        operation = GenerateVague(request="Test request")
         expected_output = "Test excuse generated successfully"
         excuse_agent.agent.run.return_value.output = expected_output
 
@@ -62,7 +62,7 @@ class TestExcuseAgentExecution:
     async def test_execute_passes_self_to_operation(self, excuse_agent, mocker):
         """Test execute passes utility instance to operation."""
         # Arrange
-        operation = GenerateVague()
+        operation = GenerateVague(request="Self test request")
         spy = mocker.spy(operation, "execute")
 
         # Act
@@ -74,8 +74,8 @@ class TestExcuseAgentExecution:
     async def test_execute_with_multiple_operations(self, excuse_agent):
         """Test execute handles multiple sequential operations."""
         # Arrange
-        operation1 = GenerateVague()
-        operation2 = GenerateVague()
+        operation1 = GenerateVague(request="First request")
+        operation2 = GenerateVague(request="Second request")
         excuse_agent.agent.run.return_value.output = "First excuse"
 
         # Act
@@ -96,7 +96,7 @@ class TestExcuseAgentErrorHandling:
     async def test_execute_propagates_agent_errors(self, excuse_agent):
         """Test execute propagates errors from agent.run."""
         # Arrange
-        operation = GenerateVague()
+        operation = GenerateVague(request="Error test")
         excuse_agent.agent.run.side_effect = Exception("API error")
 
         # Act & Assert
