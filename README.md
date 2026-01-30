@@ -422,10 +422,7 @@ curl -X POST "http://localhost:9000/2015-03-31/functions/function/invocations" \
 
 ```json
 {
-  "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?",
-  "metadata": {
-    "request_id": "test-request-id-12345"
-  }
+  "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?"
 }
 ```
 
@@ -526,10 +523,7 @@ The Lambda handler expects a JSON event with a `request` field:
 
 ```json
 {
-  "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?",
-  "metadata": {
-    "request_id": "abc-123-def-456"
-  }
+  "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?"
 }
 ```
 
