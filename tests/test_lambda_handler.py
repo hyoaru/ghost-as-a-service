@@ -15,7 +15,6 @@ class TestLambdaHandler:
     def lambda_context(self) -> LambdaContext:
         """Create a mock Lambda context."""
         context = Mock(spec=LambdaContext)
-        context.request_id = "test-request-id-12345"
         context.invoked_function_arn = "arn:aws:lambda:us-east-1:123456789012:function:test"
         return context
 
@@ -78,7 +77,6 @@ class TestMainFunction:
     def lambda_context(self) -> LambdaContext:
         """Create a mock Lambda context."""
         context = Mock(spec=LambdaContext)
-        context.request_id = "test-request-id-67890"
         return context
 
     @pytest.mark.asyncio
