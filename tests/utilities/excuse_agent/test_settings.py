@@ -27,14 +27,14 @@ class TestSettings:
         # Cleanup
         os.environ.pop("GEMINI_API_KEY")
 
-    def test_settings_requires_api_key(self):
+    def test_settings_requires_api_key(self, monkeypatch):
         """Test Settings raises error when API key is missing."""
         # Arrange - ensure no API key in environment
-        os.environ.pop("GEMINI_API_KEY", None)
-
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        
         # Act & Assert
         with pytest.raises(ValidationError):
-            Settings()
+            Settings(_env_file=None)
 
     def test_settings_rejects_empty_api_key(self):
         """Test Settings rejects empty API key."""
