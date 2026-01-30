@@ -9,7 +9,6 @@ from typing import Optional, TypeVar
 
 from pydantic_ai import Agent
 from pydantic_ai.models.google import GoogleModel
-from pydantic_ai.providers.google import GoogleProvider
 
 from .interface import ExcuseAgentABC
 from .operations.interface import ExcuseAgentOperationABC
@@ -18,6 +17,7 @@ from .settings import Settings
 T = TypeVar("T")
 
 __all__ = ["ExcuseAgent", "ExcuseAgentABC", "Settings"]
+
 
 class ExcuseAgent(ExcuseAgentABC):
     """Excuse generation agent wrapping PydanticAI with Google Gemini model.
@@ -47,14 +47,13 @@ class ExcuseAgent(ExcuseAgentABC):
             self.instructions = f.read()
 
         self.settings = settings or Settings()
+
+        # GoogleModel reads API key from GOOGLE_API_KEY or GEMINI_API_KEY env var
         self.agent = agent or Agent(
             instructions=self.instructions,
             deps_type=None,
             output_type=str,
-            model=GoogleModel(
-                "gemini-3-flash-preview",
-                provider=GoogleProvider(api_key=self.settings.GEMINI_API_KEY.get_secret_value()),
-            ),
+            model=GoogleModel("gemini-2.5-flash-lite"),
         )
 
     async def execute(self, operation: ExcuseAgentOperationABC[T]) -> T:
