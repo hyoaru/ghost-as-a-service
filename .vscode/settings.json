@@ -1,5 +1,10 @@
 {
     "chat.customAgentInSubagent.enabled": true,
     "chat.useAgentSkills": true,
-    "github.copilot.chat.codesearch.enabled": true
+    "github.copilot.chat.codesearch.enabled": true,
+    "chat.tools.terminal.autoApprove": {
+        "uv": true,
+        "git add": true,
+        "git commit": true
+    }
 }
