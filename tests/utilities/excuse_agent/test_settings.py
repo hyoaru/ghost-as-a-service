@@ -31,7 +31,7 @@ class TestSettings:
         """Test Settings raises error when API key is missing."""
         # Arrange - ensure no API key in environment
         monkeypatch.delenv("GEMINI_API_KEY", raising=False)
-        
+
         # Act & Assert
         with pytest.raises(ValidationError):
             Settings(_env_file=None)
