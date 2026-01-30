@@ -3,7 +3,7 @@ Pytest configuration and shared fixtures for excuse_agent tests.
 """
 
 from collections.abc import Generator
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -21,6 +21,7 @@ def mock_settings() -> Generator[Settings, None, None]:
     """
     # Set environment variable for testing
     import os
+
     os.environ["GEMINI_API_KEY"] = "test_api_key_12345"
     yield Settings()
     # Cleanup

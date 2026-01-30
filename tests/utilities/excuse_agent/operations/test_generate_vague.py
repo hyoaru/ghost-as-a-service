@@ -2,8 +2,6 @@
 Unit tests for GenerateVague operation.
 """
 
-from unittest.mock import AsyncMock
-
 import pytest
 
 from app.utilities.excuse_agent.operations.generate_vague import GenerateVague

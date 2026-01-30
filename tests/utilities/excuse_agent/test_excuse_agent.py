@@ -2,9 +2,6 @@
 Unit tests for ExcuseAgent utility.
 """
 
-from pathlib import Path
-from unittest.mock import AsyncMock
-
 import pytest
 
 from app.utilities.excuse_agent import ExcuseAgent
