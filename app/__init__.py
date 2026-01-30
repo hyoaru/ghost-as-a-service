@@ -36,6 +36,60 @@ async def main(event: EventModel, context: LambdaContext) -> dict:
     Returns:
         dict: The generated excuse response.
     """
-    logger.info("Processing request", extra={"request": event.request})
-    # TODO: Implement excuse generation logic
-    return {"excuse": "Not implemented yet."}
+    from app.models import ExcuseResponse
+    from app.services.excuse_generator import ExcuseGeneratorService
+    from app.services.excuse_generator.operations import GenerateExcuse
+    from app.services.excuse_generator.exceptions import (
+        InvalidRequestError,
+        ServiceGenerationError,
+    )
+
+    logger.info("Processing excuse generation request", extra={"request": event.request})
+
+    try:
+        # Initialize service with default repository (AgentExcuseRepository)
+        service = ExcuseGeneratorService()
+
+        # Create and execute operation
+        operation = GenerateExcuse(request=event.request)
+        excuse_text = await service.execute(operation)
+
+        # Build response
+        response = ExcuseResponse(excuse=excuse_text)
+
+        logger.info(
+            "Successfully generated excuse",
+            extra={"request_id": context.request_id, "excuse_length": len(excuse_text)},
+        )
+
+        return response.model_dump()
+
+    except InvalidRequestError as e:
+        logger.error(
+            "Invalid request error",
+            extra={"error": str(e), "request_id": context.request_id},
+        )
+        return {
+            "statusCode": 400,
+            "body": {"error": "Invalid request", "message": str(e)},
+        }
+
+    except ServiceGenerationError as e:
+        logger.error(
+            "Service generation error",
+            extra={"error": str(e), "request_id": context.request_id},
+        )
+        return {
+            "statusCode": 500,
+            "body": {"error": "Excuse generation failed", "message": str(e)},
+        }
+
+    except Exception as e:
+        logger.exception(
+            "Unexpected error during excuse generation",
+            extra={"error": str(e), "request_id": context.request_id},
+        )
+        return {
+            "statusCode": 500,
+            "body": {"error": "Internal server error", "message": "An unexpected error occurred"},
+        }
