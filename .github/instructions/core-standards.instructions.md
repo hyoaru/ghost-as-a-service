@@ -121,7 +121,6 @@ BASE_URL=http://localhost:8000
 - Use Lambda Powertools logger for structured logging
 - Log at appropriate levels (DEBUG, INFO, WARNING, ERROR)
 - Include relevant context in log messages
-- Use correlation IDs for request tracing
 - Add metrics for key operations
 
 ## Dependencies
@@ -136,6 +135,6 @@ BASE_URL=http://localhost:8000
 
 - Write clear and concise docstrings
 - Keep README.md up to date
-- Document complex logic with inline comments
+- Only add inline comments for code that is not self-documenting or is complex
 - Provide usage examples in documentation
 - Document API endpoints and their expected inputs/outputs
