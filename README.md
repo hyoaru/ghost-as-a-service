@@ -885,5 +885,13 @@ If you find this approach useful, feel free to adapt it to your own projects. If
 - Test-driven paranoia
 - Architectural zealotry
 - A belief that code should be boring (in a good way)
+- **Author Notes**: I did not write any of these docs forgive me
+
+**Inspired by**:
+
+- [AgentSkills.io](https://agentskills.io/) - Skill-based AI agent workflows
+- [Anthropic Skills](https://github.com/anthropics/skills) - Agent skill patterns and best practices
+- [Awesome Copilot](https://github.com/github/awesome-copilot) - GitHub Copilot resources and patterns
+- [Copilot Orchestra](https://github.com/ShepAlderson/copilot-orchestra) - Multi-agent orchestration patterns
 
 **Last Updated**: January 2026
