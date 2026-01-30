@@ -18,4 +18,4 @@ FROM public.ecr.aws/lambda/python:3.12 AS runner
 COPY --from=builder ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 COPY ./app ${LAMBDA_TASK_ROOT}/app
 
-CMD ["app.lambda.handler"]
+CMD ["app.handler"]
