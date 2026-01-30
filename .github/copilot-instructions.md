@@ -52,3 +52,72 @@ project/
 ├── uv.lock    # Lock file for dependencies    
 └── README.md    # Project documentation
 ```
+
+## Dependency and Environment Management
+
+### Using uv
+
+This project uses `uv` for fast, reliable Python package management and environment handling. `uv` is the primary tool for managing dependencies, virtual environments, and running Python commands.
+
+#### Installation and Setup
+
+```bash
+# Create and activate the virtual environment and install dependencies
+uv sync
+
+# Activate the virtual environment
+source .venv/bin/activate  # On macOS/Linux
+# or
+.venv\Scripts\activate  # On Windows
+```
+
+#### Dependency Management
+
+```bash
+# Add a new dependency
+uv add package_name
+
+# Add a development dependency
+uv add --dev package_name
+
+# Sync dependencies (install from pyproject.toml and uv.lock)
+uv sync
+```
+
+#### Running Python Scripts and Commands
+
+Always use `uv run` to execute Python commands. This ensures the correct environment and dependencies are used:
+
+```bash
+# Run a Python script
+uv run python script.py
+
+# Run pytest
+uv run pytest
+
+# Run pytest with specific options
+uv run pytest tests/ -v --cov=app
+
+# Run a Python module
+uv run python -m module_name
+
+# Run a CLI tool installed via uv
+uv run black .
+uv run mypy .
+```
+
+#### Environment Activation
+
+For interactive work, activate the virtual environment directly:
+
+```bash
+# Activate the environment
+source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate     # Windows
+
+# Verify activation (prompt should show .venv)
+which python  # Should point to .venv/bin/python
+
+# Deactivate when done
+deactivate
+```
