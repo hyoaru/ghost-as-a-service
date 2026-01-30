@@ -125,7 +125,7 @@ class GetResources(ResourceRepositoryOperationABC[List[str]]):
 
 1. **Class Name**: Settings.
 2. **Inheritance**: Inherit from pydantic_settings.BaseSettings.
-3. ****Environment Variables****
+3. \***\*Environment Variables\*\***
 
 ### Settings Example
 
@@ -148,7 +148,7 @@ Before outputting, verify:
 1. **Directory Structure**:
 
 ```plaintext
-app/repositories/<entity>_repository/
+app/repositories/<entity>/
 ├── interface.py
 └── implementations/
     └── <provider>/
