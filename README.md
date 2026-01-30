@@ -63,7 +63,7 @@ ghost-as-a-service/
 
 ### Key Components
 
-1. **Lambda Handler** ([app/__init__.py](app/__init__.py))
+1. **Lambda Handler** ([app/**init**.py](app/__init__.py))
    - Entry point for AWS Lambda
    - Uses Lambda Powertools for logging and parsing
    - Delegates to service layer for business logic
@@ -98,17 +98,20 @@ ghost-as-a-service/
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repository-url>
    cd ghost-as-a-service
    ```
 
 2. **Install dependencies using uv:**
+
    ```bash
    uv sync
    ```
 
 3. **Configure environment variables:**
+
    ```bash
    cp .env.example .env
    # Edit .env and add your GOOGLE_API_KEY
@@ -135,12 +138,12 @@ GOOGLE_API_KEY=your-google-api-key-here
 
 #### Configuration Options
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `POWERTOOLS_SERVICE_NAME` | Yes | Name of the Lambda service for Powertools logging |
-| `POWERTOOLS_LOG_LEVEL` | Yes | Logging level (DEBUG, INFO, WARNING, ERROR) |
-| `POWERTOOLS_INJECT_LOG_CONTEXT` | Yes | Whether to inject Lambda context into logs |
-| `GOOGLE_API_KEY` | Yes | API key for Google AI (Gemini) via PydanticAI |
+| Variable                        | Required | Description                                       |
+| ------------------------------- | -------- | ------------------------------------------------- |
+| `POWERTOOLS_SERVICE_NAME`       | Yes      | Name of the Lambda service for Powertools logging |
+| `POWERTOOLS_LOG_LEVEL`          | Yes      | Logging level (DEBUG, INFO, WARNING, ERROR)       |
+| `POWERTOOLS_INJECT_LOG_CONTEXT` | Yes      | Whether to inject Lambda context into logs        |
+| `GOOGLE_API_KEY`                | Yes      | API key for Google AI (Gemini) via PydanticAI     |
 
 ## Development
 
@@ -207,6 +210,7 @@ See [.github/instructions/testing-standards.instructions.md](.github/instruction
 ### Lambda Event Format
 
 **Input:**
+
 ```json
 {
   "request": "Can you help me move this weekend?"
@@ -214,6 +218,7 @@ See [.github/instructions/testing-standards.instructions.md](.github/instruction
 ```
 
 **Output:**
+
 ```json
 {
   "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?",
@@ -238,6 +243,7 @@ The service uses custom exceptions for different error scenarios:
 ### AWS Lambda Deployment
 
 1. **Build the deployment package:**
+
    ```bash
    uv export --no-hashes -o requirements.txt
    pip install -r requirements.txt -t package/
