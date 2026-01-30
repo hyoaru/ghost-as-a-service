@@ -137,10 +137,7 @@ BASE_URL=http://localhost:8000
 - Document why each dependency is needed
 - Avoid unnecessary dependencies
 
-## Documentation
+## Code Style
 
-- Write clear and concise docstrings
-- Keep README.md up to date
-- Only add inline comments for code that is not self-documenting or is complex
-- Provide usage examples in documentation
-- Document API endpoints and their expected inputs/outputs
+- Self-Documenting Code: Prioritize clear variable names, type hints, and logical structure over comments. Code should explain itself.
+- Minimal Documentation: Avoid redundant docstrings or comments. Only document complex algorithms or non-obvious business logic that cannot be simplified.
