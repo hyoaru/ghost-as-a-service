@@ -99,6 +99,7 @@ tests/
 - Use Pydantic Settings for configuration management
 
 ```python
+# utilities/excuse_agent/settings.py
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env"),

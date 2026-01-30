@@ -149,10 +149,43 @@ class HashString(PasswordHasherOperationABC[str]):
         return hashlib.sha256((self.text + self.salt).encode()).hexdigest()
 ```
 
-## Stage 5: Architecture Verification
+## Stage 5: Configuration Strategy
+
+**Location**: app/utilities/<entity>/settings.py
+**Goal**: Encapsulate provider-specific configuration (e.g., Connection Strings) using Pydantic.
+
+1. **Class Name**: Settings.
+2. **Inheritance**: Inherit from pydantic_settings.BaseSettings.
+3. ****Environment Variables****
+
+### Settings Example
+
+```python
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=(".env"),
+        case_sensitive=True,
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    BASE_URL: str = Field(default=...)
+```
+
+
+## Stage 6: Architecture Verification
 
 Before outputting, verify:
 
 1.  Does the directory structure match `app/utilities/<name>/`?
+```plaintext
+app/utilities/<name>/
+├── __init__.py
+├── interface.py
+├── settings.py
+└── operations/
+    ├── __init__.py
+    └── <op_name>.py
+```
 2.  Are `interface.py`, `__init__.py`, and `operations/` present?
 3.  Are Type Hints strictly using `Generic[T]`?

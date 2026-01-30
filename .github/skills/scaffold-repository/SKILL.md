@@ -118,7 +118,30 @@ class GetResources(ResourceRepositoryOperationABC[List[str]]):
 2. Create specific errors like EntityNotFoundError or StorageError.
 3. **Constraint**: Operations should catch provider-specific errors (e.g., ClientError, SQLAlchemyError) and re-raise them as Repository Exceptions.
 
-## Stage 5: Architecture Verification
+## Stage 5: Configuration Strategy
+
+**Location**: app/repositories/<entity>\_repository/implementations/<provider>/settings.py
+**Goal**: Encapsulate provider-specific configuration (e.g., Table Names, Connection Strings) using Pydantic.
+
+1. **Class Name**: Settings.
+2. **Inheritance**: Inherit from pydantic_settings.BaseSettings.
+3. ****Environment Variables****
+
+### Settings Example
+
+```python
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=(".env"),
+        case_sensitive=True,
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    BASE_URL: str = Field(default=...)
+```
+
+## Stage 6: Architecture Verification
 
 Before outputting, verify:
 
@@ -130,6 +153,7 @@ app/repositories/<entity>_repository/
 └── implementations/
     └── <provider>/
         ├── __init__.py
+        ├── settings.py
         └── operations/
             ├── __init__.py
             └── <op_name>.py
