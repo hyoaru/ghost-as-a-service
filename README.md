@@ -114,7 +114,7 @@ ghost-as-a-service/
 
    ```bash
    cp .env.example .env
-   # Edit .env and add your GOOGLE_API_KEY
+   # Edit .env and add your GEMINI_API_KEY
    ```
 
 4. **Run tests:**
@@ -130,38 +130,55 @@ Create a `.env` file based on `.env.example`:
 # AWS Lambda Powertools Configuration
 POWERTOOLS_SERVICE_NAME=excuse-generator
 POWERTOOLS_LOG_LEVEL=INFO
-POWERTOOLS_INJECT_LOG_CONTEXT=true
+POWERTOOLS_LOGGER_LOG_EVENT=true
 
 # AI Configuration
-GOOGLE_API_KEY=your-google-api-key-here
+GEMINI_API_KEY=your-google-api-key-here
 ```
 
 #### Configuration Options
 
-| Variable                        | Required | Description                                       |
-| ------------------------------- | -------- | ------------------------------------------------- |
-| `POWERTOOLS_SERVICE_NAME`       | Yes      | Name of the Lambda service for Powertools logging |
-| `POWERTOOLS_LOG_LEVEL`          | Yes      | Logging level (DEBUG, INFO, WARNING, ERROR)       |
-| `POWERTOOLS_INJECT_LOG_CONTEXT` | Yes      | Whether to inject Lambda context into logs        |
-| `GOOGLE_API_KEY`                | Yes      | API key for Google AI (Gemini) via PydanticAI     |
+| Variable                      | Required | Description                                       |
+| ----------------------------- | -------- | ------------------------------------------------- |
+| `POWERTOOLS_SERVICE_NAME`     | Yes      | Name of the Lambda service for Powertools logging |
+| `POWERTOOLS_LOG_LEVEL`        | Yes      | Logging level (DEBUG, INFO, WARNING, ERROR)       |
+| `POWERTOOLS_LOGGER_LOG_EVENT` | Yes      | Whether to log the incoming event                 |
+| `GEMINI_API_KEY`              | Yes      | API key for Google AI (Gemini) via PydanticAI     |
 
 ## Development
 
 ### Running Locally with Docker
 
+The Lambda function can be run locally using Docker Compose with hot-reload support:
+
 ```bash
-# Start the development environment
-docker-compose up
+# Start the Lambda function locally with hot-reload
+docker compose up --watch
 
-# Run tests in Docker
-docker-compose run app pytest
-
-# Run linting
-docker-compose run app ruff check .
-
-# Format code
-docker-compose run app ruff format .
+# The Lambda will be available at http://localhost:9000
 ```
+
+Once running, you can invoke the Lambda using curl:
+
+```bash
+# Test the excuse generator
+curl -X POST "http://localhost:9000/2015-03-31/functions/function/invocations" \
+  -H "Content-Type: application/json" \
+  -d '{"request": "Can you help me move this weekend?"}'
+```
+
+**Example Response:**
+
+```json
+{
+  "excuse": "Hey! So sorry, I'm actually in the middle of a massive data migration and my bandwidth is currently throttled by some legacy infrastructure issues. Let's circle back in Q3?",
+  "metadata": {
+    "request_id": "test-request-id-12345"
+  }
+}
+```
+
+The `--watch` flag enables hot-reload, automatically syncing changes from the `./app` directory and restarting the container when Python files are modified.
 
 ### Running Tests
 
