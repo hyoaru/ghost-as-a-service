@@ -1,9 +1,29 @@
-"""
-Abstract base classes for excuse agent operations.
+"""Abstract base class for Excuse Agent operations."""
 
-This module re-exports the ExcuseAgentOperationABC for use by operations.
-"""
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from app.utilities.excuse_agent.interface import ExcuseAgentOperationABC
+T = TypeVar("T")
 
-__all__ = ["ExcuseAgentOperationABC"]
+if TYPE_CHECKING:
+    from ..interface import ExcuseAgentABC
+
+
+class ExcuseAgentOperationABC(ABC, Generic[T]):
+    """Abstract base for operations executed against the Excuse Agent.
+
+    Implementations must define execute() to perform specific tasks
+    using the agent.
+    """
+
+    @abstractmethod
+    async def execute(self, utility: "ExcuseAgentABC") -> T:
+        """Execute the operation against the Excuse Agent.
+
+        Args:
+            utility: The Excuse Agent instance.
+
+        Returns:
+            The operation result.
+        """
+        pass

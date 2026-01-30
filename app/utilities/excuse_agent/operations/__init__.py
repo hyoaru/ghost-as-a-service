@@ -1,5 +1,6 @@
-"""Operations for the excuse agent utility."""
+"""Operations for the Excuse Agent."""
 
-from app.utilities.excuse_agent.operations.interface import ExcuseAgentOperationABC
+from .generate_vague import GenerateVague
+from .interface import ExcuseAgentOperationABC
 
-__all__ = ["ExcuseAgentOperationABC"]
+__all__ = ["ExcuseAgentOperationABC", "GenerateVague"]
