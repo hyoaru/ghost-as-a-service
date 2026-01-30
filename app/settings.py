@@ -34,3 +34,6 @@ class Settings(BaseSettings):
 
     # AI Configuration
     GOOGLE_API_KEY: str = Field(..., description="API key for Google AI (Gemini) via PydanticAI")
+    OPENAI_MODEL: str = Field(
+        default="gpt-4-turbo", description="OpenAI model to use for excuse generation"
+    )
