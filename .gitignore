@@ -12,5 +12,6 @@ wheels/
 # Files
 .env
 .secrets
+.coverage
 
 # Folders
