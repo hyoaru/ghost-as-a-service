@@ -26,4 +26,4 @@ class GenerateVague(ExcuseAgentOperationABC[str]):
         )
 
         response = await utility.agent.run(prompt)
-        return response
+        return response.output
