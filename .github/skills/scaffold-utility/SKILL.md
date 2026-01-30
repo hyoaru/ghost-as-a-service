@@ -5,9 +5,14 @@ description: Autonomous workflow to scaffold a new Utility module. Analyzes requ
 
 # Utility Scaffolding Workflow
 
-**Role:** Senior Python Architect.
-**Trigger:** User requests a new utility (e.g., "Create a PDF Generator" or "Add a Redis Client").
-**Goal:** specific implementation of the Command Pattern based on the nature of the utility.
+Scaffold a utility module by analyzing requirements and selecting a specific implementation of the Command Pattern based on the nature of the utility.
+
+## When to Use
+
+- User requests a new utility (e.g., "Create a PDF Generator" or "Add a Redis Client").
+- A new helper function or service wrapper is needed for repeated tasks across the codebase.
+- The utility encapsulates external dependencies or complex logic that should be reusable.
+- You need to standardize how the codebase interacts with third-party libraries or APIs.
 
 ## Input Requirements
 

@@ -5,9 +5,15 @@ description: Autonomous workflow to scaffold a new Service module. Orchestrates 
 
 # Service Scaffolding Workflow
 
-**Role:** Senior Python Architect.
-**Trigger:** User requests a new service (e.g., "Create a Task Service to handle reports" or "Add a User Management Service").
-**Goal:** specific implementation of the Command Pattern separating the orchestrator (Service) from the business logic (Operations).
+Scaffold a service module by creating a modular, testable service with a clear separation between orchestration and business logic through a specific implementation of the Command Pattern separating the orchestrator (Service) from the business logic (Operations).
+
+## When to Use
+
+- User requests a new service (e.g., "Create a Task Service to handle reports" or "Add a User Management Service").
+- User needs to implement business logic that requires orchestration of multiple dependencies.
+- User wants to create modular, testable code using the Command Pattern.
+- User is building domain-specific operations that should be decoupled from the service orchestrator.
+- User needs to add new operations to an existing service without modifying the service class itself.
 
 ## Input Requirements
 
@@ -138,5 +144,6 @@ app/services/<name>_service/
     ├── __init__.py
     └── <op_name>.py
 ```
-2. DI Pattern: Does __init__ use Optional and provide a default implementation?
+
+2. DI Pattern: Does **init** use Optional and provide a default implementation?
 3. Imports: Are imports relative where possible?

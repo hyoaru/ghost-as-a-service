@@ -1,7 +1,7 @@
 ---
 name: Testing Standards
 description: This file describes the testing standards for the project.
-applyTo: "tests/**/*.py"
+applyTo: "tests/**"
 ---
 
 # Testing Standards

@@ -5,9 +5,14 @@ description: Autonomous workflow to scaffold a new Repository module. Handles th
 
 # Repository Scaffolding Workflow
 
-**Role:** Senior Python Architect.
-**Trigger:** User requests a new repository (e.g., "Create a User Repository backed by Postgres" or "Add an AWS implementation for Documents").
-**Goal:** specific implementation of the Repository Pattern separating the abstract contract from the concrete provider logic.
+Scaffold a repository module by defining an abstract interface contract and implementing concrete provider-specific logic that cleanly separates data access concerns from business logic.
+
+## When to Use
+
+- User requests a new repository (e.g., "Create a User Repository backed by Postgres" or "Add an AWS implementation for Documents").
+- User needs to add data access logic for a new domain entity.
+- User wants to implement a new provider backend (e.g., Redis, DynamoDB) for an existing repository.
+- User is setting up the persistence layer for a service that doesn't yet have repository infrastructure.
 
 ## Input Requirements
 
