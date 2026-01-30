@@ -6,5 +6,7 @@
         "uv": true,
         "git add": true,
         "git commit": true
-    }
+    },
+    "editor.formatOnSave": true,
+    "ruff.format.preview": true
 }
