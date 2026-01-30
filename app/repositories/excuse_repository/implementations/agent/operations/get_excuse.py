@@ -45,7 +45,7 @@ class GetExcuse(ExcuseRepositoryOperationABC[str]):
             raise TypeError(f"Expected AgentExcuseRepository, got {type(repository).__name__}")
 
         try:
-            operation = GenerateVague()
+            operation = GenerateVague(request=self.request)
             excuse = await repository.excuse_agent.execute(operation)
             return excuse
         except Exception as e:

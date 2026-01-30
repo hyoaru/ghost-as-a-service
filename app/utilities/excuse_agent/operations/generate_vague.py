@@ -10,6 +10,14 @@ class GenerateVague(ExcuseAgentOperationABC[str]):
     reasons for unavailability.
     """
 
+    def __init__(self, request: str):
+        """Initialize the operation with the request context.
+
+        Args:
+            request: The original request or invitation to respond to.
+        """
+        self.request = request
+
     async def execute(self, utility) -> str:
         """Generate a vague technical excuse.
 
@@ -20,7 +28,8 @@ class GenerateVague(ExcuseAgentOperationABC[str]):
             A vague technical excuse string.
         """
         prompt = (
-            "I need an immensely vague 'Technical Fog' excuse." 
+            f"I received this request: '{self.request}'. "
+            + "I need an immensely vague 'Technical Fog' excuse to decline it. "
             + "Use heavy, confusing jargon so that the recipient doesn't understand the problem but feels it's too critical to question. "
             + "Make me sound stressed, professional, and too busy to explain further."
         )
