@@ -32,9 +32,14 @@ applyTo: "**"
 
 ```
 services/
-└──excuse_generator/
+└── excuse_generator/
     ├── __init__.py
     ├── interface.py
+    ├── exceptions/
+    │   ├── __init__.py
+    │   ├── base.py
+    │   ├── invalid_request_error.py
+    │   └── excuse_generation_error.py
     └── operations/
         ├── __init__.py
         ├── interface.py
