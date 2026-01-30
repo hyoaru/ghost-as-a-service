@@ -18,9 +18,6 @@ class EventModel(BaseModel):
 class ExcuseResponse(BaseModel):
     """
     Model representing the response from the excuse generator.
-
-    Contains the generated excuse text and optional metadata about the generation process.
     """
 
     excuse: str = Field(..., description="The generated excuse text")
-    metadata: dict = Field(default_factory=dict, description="Optional metadata about generation")
