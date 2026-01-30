@@ -29,9 +29,9 @@ class GenerateVague(ExcuseAgentOperationABC[str]):
         """
         prompt = (
             f"I received this request: '{self.request}'. "
-            + "I need an immensely vague 'Technical Fog' excuse to decline it. "
-            + "Use heavy, confusing jargon so that the recipient doesn't understand the problem but feels it's too critical to question. "
-            + "Make me sound stressed, professional, and too busy to explain further."
+            + "Generate a SHORT, funny excuse (2-3 sentences max) using absurd technical jargon. "
+            + "Make it sound urgent and important but hilariously vague. "
+            + "Return ONLY the excuse text, no commentary."
         )
 
         response = await utility.agent.run(prompt)
