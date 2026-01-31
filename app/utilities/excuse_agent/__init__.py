@@ -43,7 +43,7 @@ class ExcuseAgent(ExcuseAgentABC):
             settings: Optional Settings instance. If not provided,
                 loads from environment.
         """
-        with open(Path(__file__).parent / "instructions.md", "r") as f:
+        with open(Path(__file__).parent / "instructions.txt", "r") as f:
             self.instructions = f.read()
 
         self.settings = settings or Settings()
