@@ -25,7 +25,7 @@ The agent must extract the following from the user's prompt:
 
 ## Stage 1: Contract Definition (The Interface)
 
-**Location:** `app/services/<name>_service/interface.py`
+**Location:** `app/services/<name>/interface.py`
 **Goal:** Define the generic contract and declare dependencies abstractly.
 
 1.  **Service ABC:**
@@ -61,7 +61,7 @@ class TaskOperationABC(ABC, Generic[T]):
 
 ## Stage 2: Implementation Scaffolding (The Orchestrator)
 
-**Location**: app/services/<name>\_service/**init**.py
+**Location**: app/services/<name>/**init**.py
 **Goal**: Create the concrete service that holds the dependencies.
 
 1. **Class Name**: <Name>Service.
@@ -92,7 +92,7 @@ class TaskService(TaskServiceABC):
 
 ## Stage 3: Operation Scaffolding (The Logic)
 
-**Location**: app/services/<name>\_service/operations/<op_name>.py
+**Location**: app/services/<name>/operations/<op_name>.py
 **Goal**: Implement the business logic.
 
 1. **Inheritance**: Inherit from <Name>OperationABC[ReturnType].
@@ -120,7 +120,7 @@ class GenerateReport(TaskOperationABC[str]):
 
 ## Stage 4: Exception Strategy
 
-**Location**: app/services/<name>\_service/exceptions/
+**Location**: app/services/<name>/exceptions/
 **Goal**: Handle business rule violations.
 
 1. Create base.py with <Name>ServiceException.
@@ -134,9 +134,10 @@ Before outputting, verify:
 1. Directory Structure:
 
 ```
-app/services/<name>_service/
+app/services/<name>/
 ├── __init__.py
 ├── interface.py
+├── models/
 ├── exceptions/
 │   ├── __init__.py
 │   └── base.py

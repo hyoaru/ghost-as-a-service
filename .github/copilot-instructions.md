@@ -34,6 +34,7 @@
 - Docker/Docker Compose for local development and testing
 
 ### Project Structure
+
 ```
 project/
 ├── app/
@@ -49,7 +50,7 @@ project/
 ├── Dockerfile    # Dockerfile for local development
 ├── docker-compose.yml    # Docker Compose configuration
 ├── pyproject.toml    # Project dependencies and settings
-├── uv.lock    # Lock file for dependencies    
+├── uv.lock    # Lock file for dependencies
 └── README.md    # Project documentation
 ```
 

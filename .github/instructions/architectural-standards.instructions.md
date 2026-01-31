@@ -14,6 +14,13 @@ All structural components (Services, Repositories, Utilities) must adhere to the
 - **The Operation Contract:** The `execute` method must accept a strongly-typed Operation object inheriting from a domain-specific `OperationABC`.
 - **Generics:** All Operations must use `Generic[T]` to define their return type, ensuring type safety flows through the Invoker.
 
+## Data Modeling Constraints
+
+- **Services & Repositories**: Permitted to define Pydantic Models (Request/Response schemas) and Domain Entities within their module structure (e.g., inside models.py or schemas.py).
+- **Utilities**: RESTRICTED. Utilities must not define Pydantic Models or Domain Entities.
+  - **Stateful Utilities (e.g., HTTP/AWS Clients)**: Must return raw client response types (e.g., httpx.Response, botocore objects). Parsing these raw responses into Domain Models is the responsibility of the Repository layer.
+  - **Atomic Utilities**: Must operate on primitives, standard library types.
+
 ## 1. Service Layer Implementation
 
 Services act as **Orchestrators**. They hold dependencies (Repositories, Loggers) and coordinate business logic.

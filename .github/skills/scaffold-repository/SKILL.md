@@ -24,7 +24,7 @@ The agent must extract the following from the user's prompt:
 
 ## Stage 1: Contract Definition (The Interface)
 
-**Location:** `app/repositories/<entity>_repository/interface.py`
+**Location:** `app/repositories/<entity>/interface.py`
 **Goal:** Define the generic contract that the Service layer will rely on.
 
 1.  **Repository ABC:**
@@ -56,7 +56,7 @@ class ResourceRepositoryOperationABC(ABC, Generic[T]):
 
 ## Stage 2: Implementation Scaffolding (The Provider)
 
-**Location**: app/repositories/<entity>\_repository/implementations/<provider>/**init**.py
+**Location**: app/repositories/<entity>/implementations/<provider>/**init**.py
 **Goal**: Create the concrete repository that holds the specific infrastructure state.
 
 1. **Class Name**: <Provider><Entity>Repository (e.g., AwsResourceRepository).
@@ -82,7 +82,7 @@ class AwsResourceRepository(ResourceRepositoryABC):
 
 ## Stage 3: Operation Scaffolding (The Logic)
 
-**Location**: app/repositories/<entity>\_repository/implementations/<provider>/operations/<op_name>.py
+**Location**: app/repositories/<entity>/implementations/<provider>/operations/<op_name>.py
 **Goal**: Implement the logic using the specific provider.
 
 1. **Inheritance**: Inherit from <Entity>RepositoryOperationABC[ReturnType].
@@ -111,7 +111,7 @@ class GetResources(ResourceRepositoryOperationABC[List[str]]):
 
 ## Stage 4: Exception Strategy
 
-**Location**: app/repositories/<entity>\_repository/exceptions/
+**Location**: app/repositories/<entity>/exceptions/
 **Goal**: Isolate DB errors from the Service layer.
 
 1. Create base.py with <Entity>RepositoryException.
@@ -120,7 +120,7 @@ class GetResources(ResourceRepositoryOperationABC[List[str]]):
 
 ## Stage 5: Configuration Strategy
 
-**Location**: app/repositories/<entity>\_repository/implementations/<provider>/settings.py
+**Location**: app/repositories/<entity>/implementations/<provider>/settings.py
 **Goal**: Encapsulate provider-specific configuration (e.g., Table Names, Connection Strings) using Pydantic.
 
 1. **Class Name**: Settings.
@@ -150,6 +150,7 @@ Before outputting, verify:
 ```plaintext
 app/repositories/<entity>/
 ├── interface.py
+├── models/
 └── implementations/
     └── <provider>/
         ├── __init__.py
