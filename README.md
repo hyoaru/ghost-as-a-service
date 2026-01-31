@@ -20,6 +20,66 @@
 
 This isn't generic boilerplate. It's a manifestation of specific beliefs about software architecture, testability, and maintainability. If you're looking for flexible, loosely-structured code, this isn't it. If you want to see a real-world implementation of SOLID principles, Command Pattern, and TDD-first development with zero compromises, you're in the right place.
 
+### Multi-Agent Orchestration
+
+Development with this project follows a structured multi-agent workflow where a **Conductor** agent orchestrates specialized subagents (Planner, Implementer, Code Reviewer) through iterative cycles:
+
+```mermaid
+graph TD
+    Start([User Request]) --> Conductor{Conductor Agent}
+
+    Conductor -->|Delegate Research| Planner[Planner Agent]
+    Planner -->|Return Findings| Conductor
+
+    Conductor -->|Draft Plan| PlanDoc[Create Plan Document]
+    PlanDoc -->|Present| UserApproval{User Approves?}
+    UserApproval -->|No| Conductor
+    UserApproval -->|Yes| PhaseLoop{More Phases?}
+
+    PhaseLoop -->|Yes| Implementer[Implementer Agent]
+    Implementer -->|TDD: Write Tests| TestFirst[Tests Written & Failing]
+    TestFirst -->|Implement Code| CodeWritten[Minimal Code to Pass]
+    CodeWritten -->|Run Tests| TestPass[Tests Passing]
+    TestPass -->|Return Summary| Reviewer[Code Reviewer Agent]
+
+    Reviewer -->|Review Code| ReviewDecision{Review Status}
+    ReviewDecision -->|Needs Revision| Implementer
+    ReviewDecision -->|Failed| UserConsult([Consult User])
+    ReviewDecision -->|Approved| PhaseComplete[Phase Complete Document]
+
+    PhaseComplete -->|Present Summary| UserCommit{User Commits?}
+    UserCommit -->|No - Request Changes| Implementer
+    UserCommit -->|Yes| GitCommit[User Makes Git Commit]
+    GitCommit --> PhaseLoop
+
+    PhaseLoop -->|No - All Complete| FinalReport[Plan Complete Document]
+    FinalReport --> End([Task Complete])
+
+    style Conductor fill:#e1f5ff,stroke:#0366d6,stroke-width:3px
+    style Planner fill:#fff3cd,stroke:#856404
+    style Implementer fill:#d4edda,stroke:#155724
+    style Reviewer fill:#f8d7da,stroke:#721c24
+    style UserApproval fill:#e7f3ff,stroke:#004085
+    style UserCommit fill:#e7f3ff,stroke:#004085
+    style UserConsult fill:#fff3cd,stroke:#856404
+```
+
+**Workflow Phases:**
+
+1. **Planning Phase**: Conductor delegates to Planner for context research, drafts comprehensive plan, waits for user approval
+2. **Implementation Cycle** (repeats for each phase):
+   - Implementer writes tests first (TDD), implements minimal code, verifies tests pass
+   - Code Reviewer validates implementation against requirements
+   - Conductor pauses for user to commit changes
+3. **Completion**: Final report generated after all phases complete
+
+**Key Principles:**
+
+- **Mandatory Stops**: User approval required at plan creation and after each phase
+- **Strict TDD**: All implementation follows test-first development
+- **Autonomous Subagents**: Each agent works independently within its domain
+- **Incremental Progress**: Each phase is self-contained and verifiable
+
 ### The Vibe
 
 **Core Philosophy:**
@@ -91,8 +151,6 @@ The vibe isn't just philosophy — it's codified into scaffolding workflows:
 - Type hints specify data flow
 - Operations encapsulate single responsibilities
 - Tests demonstrate usage patterns
-
----
 
 ## Technology Stack
 
