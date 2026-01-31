@@ -55,13 +55,10 @@ graph TD
     PhaseLoop -->|No - All Complete| FinalReport[Plan Complete Document]
     FinalReport --> End([Task Complete])
 
-    style Conductor fill:#e1f5ff,stroke:#0366d6,stroke-width:3px
-    style Planner fill:#fff3cd,stroke:#856404
-    style Implementer fill:#d4edda,stroke:#155724
-    style Reviewer fill:#f8d7da,stroke:#721c24
-    style UserApproval fill:#e7f3ff,stroke:#004085
-    style UserCommit fill:#e7f3ff,stroke:#004085
-    style UserConsult fill:#fff3cd,stroke:#856404
+    style Conductor stroke-width:3px
+    style Planner stroke-width:2px
+    style Implementer stroke-width:2px
+    style Reviewer stroke-width:2px
 ```
 
 **Workflow Phases:**
