@@ -1,5 +1,6 @@
 """Tests for the Lambda handler entry point."""
 
+import asyncio
 from unittest.mock import Mock, AsyncMock, patch
 import pytest
 from aws_lambda_powertools.utilities.typing import LambdaContext
@@ -23,17 +24,13 @@ class TestLambdaHandler:
         """Create a valid Lambda event."""
         return {"request": "Can you help me move this weekend?"}
 
-    @patch("app.services.excuse_generator.ExcuseGeneratorService")
+    @patch("app.repositories.excuse_repository.AgentExcuseRepository.get_excuse", new_callable=AsyncMock)
     def test_handler_with_valid_event(
-        self, mock_service_class, valid_event: dict, lambda_context: LambdaContext
+        self, mock_get_excuse, valid_event: dict, lambda_context: LambdaContext
     ):
         """Test handler successfully processes a valid event."""
-        # Given: Mocked service returns an excuse
-        mock_service = AsyncMock()
-        mock_service.execute = AsyncMock(
-            return_value="Sorry, I'm in the middle of a massive data migration."
-        )
-        mock_service_class.return_value = mock_service
+        # Given: Mocked repository returns an excuse
+        mock_get_excuse.return_value = "Sorry, I'm in the middle of a massive data migration."
 
         # When: Handler is called with a valid event
         result = handler(valid_event, lambda_context)
@@ -80,15 +77,13 @@ class TestMainFunction:
         return context
 
     @pytest.mark.asyncio
-    @patch("app.services.excuse_generator.ExcuseGeneratorService")
-    async def test_main_with_valid_request(self, mock_service_class, lambda_context: LambdaContext):
+    @patch("app.repositories.excuse_repository.AgentExcuseRepository.get_excuse")
+    async def test_main_with_valid_request(self, mock_get_excuse, lambda_context: LambdaContext):
         """Test main function processes valid request successfully."""
-        # Given: Mocked service returns an excuse
-        mock_service = AsyncMock()
-        mock_service.execute = AsyncMock(
-            return_value="Sorry, I'm experiencing unprecedented technical debt consolidation."
+        # Given: Mocked repository returns an excuse
+        mock_get_excuse.return_value = (
+            "Sorry, I'm experiencing unprecedented technical debt consolidation."
         )
-        mock_service_class.return_value = mock_service
 
         # Given: A valid event model
         event = EventModel(request="Are you free for dinner tonight?")
@@ -101,17 +96,15 @@ class TestMainFunction:
         assert isinstance(result["excuse"], str)
 
     @pytest.mark.asyncio
-    @patch("app.services.excuse_generator.ExcuseGeneratorService")
+    @patch("app.repositories.excuse_repository.AgentExcuseRepository.get_excuse")
     async def test_main_returns_excuse_response_dict(
-        self, mock_service_class, lambda_context: LambdaContext
+        self, mock_get_excuse, lambda_context: LambdaContext
     ):
         """Test main function returns ExcuseResponse as dict."""
-        # Given: Mocked service returns an excuse
-        mock_service = AsyncMock()
-        mock_service.execute = AsyncMock(
-            return_value="My bandwidth is currently throttled by legacy infrastructure."
+        # Given: Mocked repository returns an excuse
+        mock_get_excuse.return_value = (
+            "My bandwidth is currently throttled by legacy infrastructure."
         )
-        mock_service_class.return_value = mock_service
 
         # Given: A valid event model
         event = EventModel(request="Can you review my code?")
@@ -126,11 +119,9 @@ class TestMainFunction:
     @pytest.mark.asyncio
     async def test_main_logs_request(self, lambda_context: LambdaContext, caplog):
         """Test main function logs the incoming request."""
-        # Given: A valid event model with mocked service
-        with patch("app.services.excuse_generator.ExcuseGeneratorService") as mock_service_class:
-            mock_service = AsyncMock()
-            mock_service.execute = AsyncMock(return_value="Test excuse")
-            mock_service_class.return_value = mock_service
+        # Given: A valid event model with mocked repository
+        with patch("app.repositories.excuse_repository.AgentExcuseRepository.get_excuse") as mock_get_excuse:
+            mock_get_excuse.return_value = "Test excuse"
 
             event = EventModel(request="Want to grab coffee?")
 
@@ -158,21 +149,19 @@ class TestMainFunction:
         assert result["body"]["error"] == "Invalid request"
 
     @pytest.mark.asyncio
-    @patch("app.services.excuse_generator.ExcuseGeneratorService")
+    @patch("app.repositories.excuse_repository.AgentExcuseRepository.get_excuse")
     async def test_main_with_various_requests(
-        self, mock_service_class, lambda_context: LambdaContext
+        self, mock_get_excuse, lambda_context: LambdaContext
     ):
         """Test main function with different request types."""
-        # Given: Mocked service returns different excuses
-        mock_service = AsyncMock()
+        # Given: Mocked repository returns different excuses
         excuses = [
             "Sorry, massive data migration in progress.",
             "Bandwidth throttled by legacy infrastructure.",
             "Experiencing unprecedented technical debt.",
             "Currently optimizing our CI/CD pipeline.",
         ]
-        mock_service.execute = AsyncMock(side_effect=excuses)
-        mock_service_class.return_value = mock_service
+        mock_get_excuse.side_effect = excuses
 
         requests = [
             "Can you help me move this weekend?",

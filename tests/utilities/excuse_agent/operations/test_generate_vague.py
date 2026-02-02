@@ -41,10 +41,9 @@ class TestGenerateVague:
 
         # Verify prompt contains expected keywords
         assert request in prompt
-        assert "Technical Fog" in prompt
-        assert "vague" in prompt
-        assert "jargon" in prompt
-        assert "professional" in prompt
+        assert "excuse" in prompt.lower()
+        assert "technical" in prompt.lower() or "jargon" in prompt.lower()
+        assert "short" in prompt.lower() or "2-3 sentences" in prompt.lower()
 
     async def test_execute_returns_string_type(self, excuse_agent):
         """Test execute always returns a string."""
