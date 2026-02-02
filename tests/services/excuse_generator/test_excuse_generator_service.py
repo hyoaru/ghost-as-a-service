@@ -41,7 +41,7 @@ class TestExcuseGeneratorService:
         """Test service execute method delegates to operation correctly."""
         # Arrange
         expected_excuse = "Sorry, I'm dealing with some critical infrastructure issues."
-        mock_excuse_repository.execute.return_value = expected_excuse
+        mock_excuse_repository.get_excuse.return_value = expected_excuse
         operation = GenerateExcuse(request=sample_request)
 
         # Act
@@ -49,7 +49,7 @@ class TestExcuseGeneratorService:
 
         # Assert
         assert result == expected_excuse
-        mock_excuse_repository.execute.assert_awaited_once()
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(sample_request)
 
     async def test_execute_passes_service_context_to_operation(
         self, excuse_generator_service, sample_request
@@ -78,4 +78,4 @@ class TestExcuseGeneratorService:
         # Assert
         assert isinstance(result, str)
         assert len(result) > 0
-        mock_excuse_repository.execute.assert_awaited_once()
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(various_requests)

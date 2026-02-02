@@ -1,46 +1,26 @@
 """Abstract interface for the Excuse Repository."""
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
-
-T = TypeVar("T")
 
 
 class ExcuseRepositoryABC(ABC):
     """Abstract base class defining the Excuse Repository contract.
 
-    Implements the Command Pattern for executing operations against
-    excuse data sources.
+    Repositories provide direct methods for data access operations.
     """
 
     @abstractmethod
-    async def execute(self, operation: "ExcuseRepositoryOperationABC[T]") -> T:
-        """Execute a repository operation.
+    async def get_excuse(self, request: str) -> str:
+        """Get an excuse for the given request.
 
         Args:
-            operation: The operation to execute.
+            request: The invitation or request text to generate an excuse for.
 
         Returns:
-            The result of the operation execution.
-        """
-        pass
+            A generated or retrieved excuse string.
 
-
-class ExcuseRepositoryOperationABC(ABC, Generic[T]):
-    """Abstract base class for repository operations.
-
-    All repository operations must inherit from this class and implement
-    the execute method with the appropriate return type.
-    """
-
-    @abstractmethod
-    async def execute(self, repository: ExcuseRepositoryABC) -> T:
-        """Execute the operation against a repository instance.
-
-        Args:
-            repository: The repository instance to execute against.
-
-        Returns:
-            The operation result with type T.
+        Raises:
+            InvalidExcuseRequestError: If the request is empty or invalid.
+            ExcuseGenerationError: If excuse retrieval fails.
         """
         pass

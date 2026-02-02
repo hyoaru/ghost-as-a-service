@@ -11,7 +11,7 @@ from app.services.excuse_generator import ExcuseGeneratorService
 def mock_excuse_repository():
     """Mock repository for testing the service layer."""
     mock = AsyncMock(spec=ExcuseRepositoryABC)
-    mock.execute.return_value = (
+    mock.get_excuse.return_value = (
         "Sorry, I'm swamped with a massive data migration project right now."
     )
     return mock

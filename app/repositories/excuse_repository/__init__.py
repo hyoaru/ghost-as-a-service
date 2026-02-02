@@ -10,17 +10,14 @@ Example usage:
         AgentExcuseRepository,
         PrepopulatedExcuseRepository,
     )
-    from app.repositories.excuse_repository.implementations.agent.operations import GetExcuse
 
     # Using agent-based repository
     repository = AgentExcuseRepository()
-    operation = GetExcuse(request="Can you help me move?")
-    excuse = await repository.execute(operation)
+    excuse = await repository.get_excuse("Can you help me move?")
 
     # Using prepopulated repository
     repository = PrepopulatedExcuseRepository()
-    operation = GetExcuse(request="Can you help me move?")
-    excuse = await repository.execute(operation)
+    excuse = await repository.get_excuse("Can you help me move?")
 """
 
 from .exceptions import (
@@ -29,11 +26,10 @@ from .exceptions import (
     InvalidExcuseRequestError,
 )
 from .implementations import AgentExcuseRepository, PrepopulatedExcuseRepository
-from .interface import ExcuseRepositoryABC, ExcuseRepositoryOperationABC
+from .interface import ExcuseRepositoryABC
 
 __all__ = [
     "ExcuseRepositoryABC",
-    "ExcuseRepositoryOperationABC",
     "AgentExcuseRepository",
     "PrepopulatedExcuseRepository",
     "ExcuseRepositoryException",

@@ -4,7 +4,6 @@ from app.repositories.excuse_repository.exceptions import (
     ExcuseGenerationError,
     InvalidExcuseRequestError,
 )
-from app.repositories.excuse_repository.implementations.agent.operations import GetExcuse
 
 from ..exceptions import InvalidRequestError, ServiceGenerationError
 from ..interface import ExcuseGeneratorOperationABC, ExcuseGeneratorServiceABC
@@ -44,8 +43,7 @@ class GenerateExcuse(ExcuseGeneratorOperationABC[str]):
             ServiceGenerationError: If excuse generation fails at any layer.
         """
         try:
-            operation = GetExcuse(request=self.request)
-            excuse = await service.repository.execute(operation)
+            excuse = await service.repository.get_excuse(self.request)
             return excuse
 
         except InvalidExcuseRequestError as e:

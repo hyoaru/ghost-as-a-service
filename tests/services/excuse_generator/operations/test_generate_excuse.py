@@ -54,7 +54,7 @@ class TestGenerateExcuse:
         """Test successful excuse generation."""
         # Arrange
         expected_excuse = "Sorry, I'm in the middle of a critical deployment cycle."
-        mock_excuse_repository.execute.return_value = expected_excuse
+        mock_excuse_repository.get_excuse.return_value = expected_excuse
         operation = GenerateExcuse(request=sample_request)
 
         # Act
@@ -62,12 +62,12 @@ class TestGenerateExcuse:
 
         # Assert
         assert result == expected_excuse
-        mock_excuse_repository.execute.assert_awaited_once()
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(sample_request)
 
-    async def test_execute_calls_repository_with_correct_operation(
+    async def test_execute_calls_repository_with_correct_arguments(
         self, excuse_generator_service, mock_excuse_repository, sample_request
     ):
-        """Test operation calls repository with GetExcuse operation."""
+        """Test operation calls repository with correct request."""
         # Arrange
         operation = GenerateExcuse(request=sample_request)
 
@@ -75,17 +75,14 @@ class TestGenerateExcuse:
         await operation.execute(excuse_generator_service)
 
         # Assert
-        mock_excuse_repository.execute.assert_awaited_once()
-        call_args = mock_excuse_repository.execute.call_args[0][0]
-        assert hasattr(call_args, "request")
-        assert call_args.request == sample_request
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(sample_request)
 
     async def test_execute_wraps_invalid_excuse_request_error(
         self, excuse_generator_service, mock_excuse_repository, sample_request
     ):
         """Test InvalidExcuseRequestError is wrapped as InvalidRequestError."""
         # Arrange
-        mock_excuse_repository.execute.side_effect = InvalidExcuseRequestError(
+        mock_excuse_repository.get_excuse.side_effect = InvalidExcuseRequestError(
             "Invalid request format"
         )
         operation = GenerateExcuse(request=sample_request)
@@ -99,7 +96,7 @@ class TestGenerateExcuse:
     ):
         """Test ExcuseGenerationError is wrapped as ServiceGenerationError."""
         # Arrange
-        mock_excuse_repository.execute.side_effect = ExcuseGenerationError("API failed")
+        mock_excuse_repository.get_excuse.side_effect = ExcuseGenerationError("API failed")
         operation = GenerateExcuse(request=sample_request)
 
         # Act & Assert
@@ -111,7 +108,7 @@ class TestGenerateExcuse:
     ):
         """Test unexpected errors are wrapped as ServiceGenerationError."""
         # Arrange
-        mock_excuse_repository.execute.side_effect = RuntimeError("Unexpected error")
+        mock_excuse_repository.get_excuse.side_effect = RuntimeError("Unexpected error")
         operation = GenerateExcuse(request=sample_request)
 
         # Act & Assert
@@ -124,7 +121,7 @@ class TestGenerateExcuse:
         """Test exception chaining is preserved for debugging."""
         # Arrange
         original_error = ExcuseGenerationError("Original error")
-        mock_excuse_repository.execute.side_effect = original_error
+        mock_excuse_repository.get_excuse.side_effect = original_error
         operation = GenerateExcuse(request=sample_request)
 
         # Act & Assert

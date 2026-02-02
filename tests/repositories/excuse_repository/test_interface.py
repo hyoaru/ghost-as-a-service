@@ -2,19 +2,10 @@
 
 import pytest
 
-from app.repositories.excuse_repository import (
-    ExcuseRepositoryABC,
-    ExcuseRepositoryOperationABC,
-)
+from app.repositories.excuse_repository import ExcuseRepositoryABC
 
 
 def test_repository_abc_is_abstract():
     """Verify that ExcuseRepositoryABC cannot be instantiated directly."""
     with pytest.raises(TypeError):
         ExcuseRepositoryABC()
-
-
-def test_operation_abc_is_abstract():
-    """Verify that ExcuseRepositoryOperationABC cannot be instantiated directly."""
-    with pytest.raises(TypeError):
-        ExcuseRepositoryOperationABC()

@@ -5,12 +5,11 @@ external API calls. Useful for testing, development, or rate-limited scenarios.
 """
 
 import random
-from typing import Optional, TypeVar
+from typing import Optional
 
-from ...interface import ExcuseRepositoryABC, ExcuseRepositoryOperationABC
+from ...interface import ExcuseRepositoryABC
+from ...exceptions import ExcuseGenerationError, InvalidExcuseRequestError
 from .settings import Settings
-
-T = TypeVar("T")
 
 
 class PrepopulatedExcuseRepository(ExcuseRepositoryABC):
@@ -31,13 +30,26 @@ class PrepopulatedExcuseRepository(ExcuseRepositoryABC):
         self.excuses = self.settings.PREPOPULATED_EXCUSES
         random.seed()
 
-    async def execute(self, operation: ExcuseRepositoryOperationABC[T]) -> T:
-        """Execute a repository operation.
+    async def get_excuse(self, request: str) -> str:
+        """Get an excuse for the given request.
 
         Args:
-            operation: The operation to execute.
+            request: The invitation or request text (validated but not used for selection).
 
         Returns:
-            The result of the operation execution.
+            A randomly selected excuse from the prepopulated list.
+
+        Raises:
+            InvalidExcuseRequestError: If the request is empty or invalid.
+            ExcuseGenerationError: If the excuse list is empty or selection fails.
         """
-        return await operation.execute(self)
+        if not request or not request.strip():
+            raise InvalidExcuseRequestError("Request text cannot be empty")
+
+        if not self.excuses:
+            raise ExcuseGenerationError("No excuses available in prepopulated list")
+
+        try:
+            return random.choice(self.excuses)
+        except Exception as e:
+            raise ExcuseGenerationError(f"Failed to select excuse: {e}") from e
