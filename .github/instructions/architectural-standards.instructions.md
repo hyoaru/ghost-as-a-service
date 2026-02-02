@@ -6,11 +6,11 @@ applyTo: "app/**"
 
 # Architectural Standards
 
-## Universal Command Pattern Rules
+## Universal Command Pattern Rules (Services & Utilities Only)
 
-All structural components (Services, Repositories, Utilities) must adhere to the Command Pattern to decouple execution logic from the Invoker.
+Services and Utilities must adhere to the Command Pattern to decouple execution logic from the Invoker.
 
-- **The Invoker Contract:** Every Service, Repository, and Utility class must implement a single public `async def execute` method.
+- **The Invoker Contract:** Every Service and Utility class must implement a single public `async def execute` method.
 - **The Operation Contract:** The `execute` method must accept a strongly-typed Operation object inheriting from a domain-specific `OperationABC`.
 - **Generics:** All Operations must use `Generic[T]` to define their return type, ensuring type safety flows through the Invoker.
 
@@ -32,12 +32,12 @@ Services act as **Orchestrators**. They hold dependencies (Repositories, Loggers
 
 ## 2. Repository Layer Implementation
 
-Repositories act as **Data Access Gateways**. They handle specific implementation details (e.g., AWS Boto3 sessions, SQL Alchemy sessions).
+Repositories act as **Data Access Gateways**. They provide direct methods for data operations.
 
-- **Context Injection:** Repository Operations **must** accept the Repository instance as an argument in their `execute` method.
-  - _Signature Logic:_ `operation.execute(repository_instance)`
-- **Implementation Enforcement:** Concrete Operations are permitted to perform runtime checks (e.g., `isinstance`) to ensure they are running against the correct concrete Repository implementation (e.g., checking for `AwsResourceRepository` to access the `boto3` session).
-- **Scope:** Operations here must be strictly limited to I/O and data transformation. No business logic.
+- **Repository Structure:** Repositories define abstract methods (e.g., `get_by_id()`, `save()`, `delete()`) that each provider implements.
+- **Method Signature:** All repository methods should be `async def method_name(self, *args) -> ReturnType`
+- **Provider-Specific Logic:** Each implementation (AWS, Postgres, Mock) provides its own version of the methods.
+- **Scope:** Methods are strictly limited to I/O and data transformation. No business logic.
 
 ## 3. Utility Layer Implementation
 

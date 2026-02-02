@@ -38,20 +38,29 @@
 ```
 project/
 ├── app/
-│   ├── __init__.py    # Lambda function entry point
-│   ├── models.py    # Pydantic models for request/response
-│   ├── utilities/    # Helper functions and utilities
-│   ├── repositories/   # Data access layer
-│   └── services/    # Core service logic for excuse generation
-├── tests/
-│   ├── utilities/    # Unit tests for the Lambda function
-│   ├── repositories/    # Unit tests for data access layer
-│   └── services/    # Unit tests for service logic
-├── Dockerfile    # Dockerfile for local development
-├── docker-compose.yml    # Docker Compose configuration
-├── pyproject.toml    # Project dependencies and settings
-├── uv.lock    # Lock file for dependencies
-└── README.md    # Project documentation
+│   ├── __init__.py          # Lambda function entry point
+│   ├── models.py            # Pydantic models for request/response
+│   ├── services/            # Business logic orchestrators
+│   │   └── excuse_generator/
+│   │       ├── interface.py    # ABCs for service and operations
+│   │       └── operations/     # Service operations
+│   ├── repositories/        # Data access layer
+│   │   └── excuse_repository/
+│   │       ├── interface.py    # ABC with abstract methods
+│   │       └── implementations/  # Provider-specific implementations
+│   │           ├── agent/      # LLM-powered implementation
+│   │           └── prepopulated/  # Static data implementation
+│   └── utilities/           # Infrastructure wrappers and helpers
+│       └── excuse_agent/
+├── tests/                   # Mirror structure of app/
+│   ├── services/
+│   ├── repositories/
+│   └── utilities/
+├── Dockerfile               # Dockerfile for local development
+├── docker-compose.yml       # Docker Compose configuration
+├── pyproject.toml           # Project dependencies and settings
+├── uv.lock                  # Lock file for dependencies
+└── README.md                # Project documentation
 ```
 
 ## Dependency and Environment Management

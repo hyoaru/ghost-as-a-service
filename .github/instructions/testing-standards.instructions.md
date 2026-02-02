@@ -110,18 +110,18 @@ def mock_excuse_repository():
     """Mock async repository."""
     mock = AsyncMock(ExcuseRepositoryABC)
     # Configure default behavior
-    mock.execute.return_value = "default excuse"
+    mock.get_excuse.return_value = "default excuse"
     return mock
 ```
 
 ### Configuring Mock Return Values and Side Effects
 
 ```python
-async def test_generate_vague_success(excuse_generator, mock_excuse_repository):
+async def test_generate_excuse_success(excuse_generator, mock_excuse_repository):
     # Arrange
     expected_excuse = "I'd love to help, but I'm swamped with a critical project."
-    mock_excuse_repository.execute.return_value = expected_excuse
-    operation = GenerateVague("Can you help me move?")
+    mock_excuse_repository.get_excuse.return_value = expected_excuse
+    operation = GenerateExcuse("Can you help me move?")
 
     # Act
     result = await excuse_generator.execute(operation)
@@ -131,8 +131,8 @@ async def test_generate_vague_success(excuse_generator, mock_excuse_repository):
 
 async def test_repository_failure(excuse_generator, mock_excuse_repository):
     # Arrange - mock raises exception
-    mock_excuse_repository.execute.side_effect = ExcuseGenerationError("API failed")
-    operation = GenerateVague("Can you help?")
+    mock_excuse_repository.get_excuse.side_effect = ExcuseGenerationError("API failed")
+    operation = GenerateExcuse("Can you help?")
 
     # Act & Assert
     with pytest.raises(ExcuseGenerationError):
@@ -145,21 +145,20 @@ async def test_repository_failure(excuse_generator, mock_excuse_repository):
 async def test_repository_called_correctly(excuse_generator, mock_excuse_repository):
     # Arrange
     request = "Can you help me move?"
-    mock_excuse_repository.execute.return_value = "excuse"
-    operation = GenerateVague(request)
+    mock_excuse_repository.get_excuse.return_value = "excuse"
+    operation = GenerateExcuse(request)
 
     # Act
     await excuse_generator.execute(operation)
 
     # Assert - verify mock was called
-    mock_excuse_repository.execute.assert_awaited_once()
+    mock_excuse_repository.get_excuse.assert_awaited_once()
 
     # Assert - verify mock was called with specific arguments
-    call_args = mock_excuse_repository.execute.call_args
-    assert isinstance(call_args[0][0], GetVague)
+    mock_excuse_repository.get_excuse.assert_awaited_once_with(request)
 
     # Assert - check call count
-    assert mock_excuse_repository.execute.await_count == 1
+    assert mock_excuse_repository.get_excuse.await_count == 1
 ```
 
 ### When to Use pytest-mock vs unittest.mock
@@ -196,7 +195,7 @@ class TestGenerateVague:
         # Arrange
         request = "Can you help me move?"
         expected = "Sorry, I'm in the middle of a massive data migration."
-        mock_excuse_repository.execute.return_value = expected
+        mock_excuse_repository.get_excuse.return_value = expected
         operation = GenerateVague(request)
 
         # Act
@@ -211,7 +210,7 @@ class TestGenerateVague:
         # Arrange
         request = "Can you help me move this weekend and also babysit?"
         expected = "My bandwidth is currently throttled by legacy infrastructure."
-        mock_excuse_repository.execute.return_value = expected
+        mock_excuse_repository.get_excuse.return_value = expected
         operation = GenerateVague(request)
 
         # Act
@@ -224,7 +223,7 @@ class TestGenerateVague:
         self, excuse_generator, mock_excuse_repository
     ):
         # Arrange
-        mock_excuse_repository.execute.side_effect = ExcuseGenerationError("Failed")
+        mock_excuse_repository.get_excuse.side_effect = ExcuseGenerationError("Failed")
         operation = GenerateVague("Can you help?")
 
         # Act & Assert
@@ -249,7 +248,7 @@ async def test_generate_vague_returns_excuse_when_valid_request(self):
 async def test_generate_vague_raises_error_when_invalid_request(self):
     pass
 
-async def test_repository_execute_called_once_when_operation_succeeds(self):
+async def test_repository_get_excuse_called_once_when_operation_succeeds(self):
     pass
 ```
 
@@ -272,7 +271,7 @@ async def test_async_operation(excuse_generator):
 # Test multiple async operations
 async def test_multiple_operations(excuse_generator, mock_excuse_repository):
     # Arrange
-    mock_excuse_repository.execute.return_value = "excuse"
+    mock_excuse_repository.get_excuse.return_value = "excuse"
     operation1 = GenerateVague("Request 1")
     operation2 = GenerateVague("Request 2")
 
@@ -283,7 +282,7 @@ async def test_multiple_operations(excuse_generator, mock_excuse_repository):
     # Assert
     assert result1 == "excuse"
     assert result2 == "excuse"
-    assert mock_excuse_repository.execute.await_count == 2
+    assert mock_excuse_repository.get_excuse.await_count == 2
 ```
 
 ## Test Data Management
@@ -328,7 +327,7 @@ from tests.utilities.factories import ExcuseFactory
 async def test_with_factory(excuse_generator, mock_excuse_repository):
     # Arrange
     expected = ExcuseFactory.create_vague_excuse("data migration")
-    mock_excuse_repository.execute.return_value = expected
+    mock_excuse_repository.get_excuse.return_value = expected
     operation = GenerateVague("Can you help?")
 
     # Act
@@ -355,7 +354,7 @@ def sample_request():
 async def test_good_example(excuse_generator, mock_excuse_repository, sample_request):
     # Arrange
     expected = ExcuseFactory.create_vague_excuse()
-    mock_excuse_repository.execute.return_value = expected
+    mock_excuse_repository.get_excuse.return_value = expected
     operation = GenerateVague(sample_request)
 
     # Act
@@ -372,7 +371,7 @@ async def test_good_example(excuse_generator, mock_excuse_repository, sample_req
 ```python
 async def test_with_specific_assertions(excuse_generator, mock_excuse_repository):
     # Arrange
-    mock_excuse_repository.execute.return_value = "excuse"
+    mock_excuse_repository.get_excuse.return_value = "excuse"
     operation = GenerateVague("Can you help?")
 
     # Act
@@ -394,7 +393,7 @@ async def test_with_specific_assertions(excuse_generator, mock_excuse_repository
 ```python
 async def test_raises_specific_exception(excuse_generator, mock_excuse_repository):
     # Arrange
-    mock_excuse_repository.execute.side_effect = ExcuseGenerationError(
+    mock_excuse_repository.get_excuse.side_effect = ExcuseGenerationError(
         "API rate limit exceeded"
     )
     operation = GenerateVague("Can you help?")
@@ -423,7 +422,7 @@ async def test_handles_invalid_request(excuse_generator):
 async def test_multiple_assertions(excuse_generator, mock_excuse_repository):
     # Arrange
     expected_excuse = "I'm swamped with a critical project deadline."
-    mock_excuse_repository.execute.return_value = expected_excuse
+    mock_excuse_repository.get_excuse.return_value = expected_excuse
     operation = GenerateVague("Can you help me move?")
 
     # Act
@@ -435,9 +434,7 @@ async def test_multiple_assertions(excuse_generator, mock_excuse_repository):
     assert result == expected_excuse, "Result should match expected excuse"
 
     # Assert on mock calls
-    mock_excuse_repository.execute.assert_awaited_once()
-    call_args = mock_excuse_repository.execute.call_args[0][0]
-    assert isinstance(call_args, GetVague)
+    mock_excuse_repository.get_excuse.assert_awaited_once()
 ```
 
 ## Test Coverage Guidelines
@@ -492,7 +489,7 @@ async def test_empty_request_raises_error(excuse_generator):
         await excuse_generator.execute(operation)
 
 async def test_repository_error_handling(excuse_generator, mock_excuse_repository):
-    mock_excuse_repository.execute.side_effect = Exception("Connection failed")
+    mock_excuse_repository.get_excuse.side_effect = Exception("Connection failed")
     with pytest.raises(ExcuseGenerationError):
         operation = GenerateVague("Can you help?")
         await excuse_generator.execute(operation)
@@ -507,22 +504,19 @@ async def test_repository_error_handling(excuse_generator, mock_excuse_repositor
 class TestGenerateVague:
     """Unit tests for GenerateVague operation."""
 
-    async def test_execute_calls_repository_with_correct_operation(
+    async def test_execute_calls_repository_correctly(
         self, excuse_generator, mock_excuse_repository
     ):
         # Arrange
         request = "Can you help me move?"
-        mock_excuse_repository.execute.return_value = "excuse"
+        mock_excuse_repository.get_excuse.return_value = "excuse"
         operation = GenerateVague(request)
 
         # Act
         await excuse_generator.execute(operation)
 
         # Assert
-        mock_excuse_repository.execute.assert_awaited_once()
-        call_args = mock_excuse_repository.execute.call_args[0][0]
-        assert isinstance(call_args, GetVague)
-        assert call_args.prompt == request
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(request)
 ```
 
 ### Mocking Boundaries for Unit Tests
@@ -532,7 +526,7 @@ class TestGenerateVague:
 class TestExcuseGenerator:
     async def test_generate_excuse(self, mock_excuse_repository):
         # Arrange - mock external dependency (repository)
-        mock_excuse_repository.execute.return_value = "excuse"
+        mock_excuse_repository.get_excuse.return_value = "excuse"
         service = ExcuseGenerator(excuse_repository=mock_excuse_repository)
         operation = GenerateVague("Can you help?")
 
@@ -563,13 +557,13 @@ class TestGenerateVagueOperationLogic:
         self, excuse_generator, mock_excuse_repository
     ):
         # Test operation's interaction with service
-        mock_excuse_repository.execute.return_value = "excuse"
+        mock_excuse_repository.get_excuse.return_value = "excuse"
         operation = GenerateVague("Can you help?")
 
         result = await operation.execute(excuse_generator)
 
         assert result == "excuse"
-        mock_excuse_repository.execute.assert_awaited_once()
+        mock_excuse_repository.get_excuse.assert_awaited_once()
 ```
 
 ## Example: Complete Test Suite
@@ -580,7 +574,6 @@ import pytest
 from unittest.mock import AsyncMock
 from app.services.excuse_generator import ExcuseGenerator
 from app.services.excuse_generator.operations import GenerateVague
-from app.repositories.excuse_repository.operations import GetVague
 from app.exceptions import ExcuseGenerationError, InvalidRequestError
 
 
@@ -593,7 +586,7 @@ class TestGenerateVague:
         # Arrange
         request = "Can you help me move this weekend?"
         expected_excuse = "I'd love to help, but I'm swamped with a critical project."
-        mock_excuse_repository.execute.return_value = expected_excuse
+        mock_excuse_repository.get_excuse.return_value = expected_excuse
         operation = GenerateVague(request)
 
         # Act
@@ -604,21 +597,19 @@ class TestGenerateVague:
         assert isinstance(result, str)
         assert len(result) > 0
 
-    async def test_calls_repository_with_correct_operation(
+    async def test_calls_repository_correctly(
         self, excuse_generator, mock_excuse_repository
     ):
         # Arrange
         request = "Can you help?"
-        mock_excuse_repository.execute.return_value = "excuse"
+        mock_excuse_repository.get_excuse.return_value = "excuse"
         operation = GenerateVague(request)
 
         # Act
         await excuse_generator.execute(operation)
 
         # Assert
-        mock_excuse_repository.execute.assert_awaited_once()
-        call_args = mock_excuse_repository.execute.call_args[0][0]
-        assert isinstance(call_args, GetVague)
+        mock_excuse_repository.get_excuse.assert_awaited_once_with(request)
 
     async def test_raises_error_when_request_is_empty(self, excuse_generator):
         # Arrange
@@ -634,7 +625,7 @@ class TestGenerateVague:
         self, excuse_generator, mock_excuse_repository
     ):
         # Arrange
-        mock_excuse_repository.execute.side_effect = ExcuseGenerationError(
+        mock_excuse_repository.get_excuse.side_effect = ExcuseGenerationError(
             "API failed"
         )
         operation = GenerateVague("Can you help?")
@@ -654,7 +645,7 @@ class TestGenerateVague:
         self, excuse_generator, mock_excuse_repository, request
     ):
         # Arrange
-        mock_excuse_repository.execute.return_value = "excuse"
+        mock_excuse_repository.get_excuse.return_value = "excuse"
         operation = GenerateVague(request)
 
         # Act
@@ -663,5 +654,5 @@ class TestGenerateVague:
         # Assert
         assert isinstance(result, str)
         assert len(result) > 0
-        mock_excuse_repository.execute.assert_awaited_once()
+        mock_excuse_repository.get_excuse.assert_awaited_once()
 ```

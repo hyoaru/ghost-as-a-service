@@ -42,13 +42,28 @@ services/
     │   └── excuse_generation_error.py
     └── operations/
         ├── __init__.py
-        ├── interface.py
-        └── generate_vague.py
+        └── generate_excuse.py
+
+repositories/
+└── excuse_repository/
+    ├── __init__.py
+    ├── interface.py            # ABC with abstract methods (get_excuse, etc.)
+    ├── exceptions/
+    │   ├── __init__.py
+    │   ├── base.py
+    │   └── excuse_generation_error.py
+    └── implementations/
+        ├── agent/
+        │   ├── __init__.py      # AgentExcuseRepository.get_excuse() method
+        │   └── settings.py
+        └── prepopulated/
+            ├── __init__.py      # PrepopulatedExcuseRepository.get_excuse() method
+            └── settings.py
 ```
 
 - Use clear separation of concerns (models, services, repositories, utilities)
-- Place business logic in service classes
-- Keep data access logic in repository classes
+- Place business logic in service operations
+- Keep data access logic in repository methods (direct method calls)
 - The `tests/` directory should mirror the structure of the `app/` directory
 
 ```
@@ -57,24 +72,29 @@ app/
 ├── models.py
 ├── utilities/
 ├── repositories/
+│   └── excuse_repository/
+│       ├── interface.py         # ABC with abstract methods
+│       └── implementations/     # Each implements the methods
+│           ├── agent/
+│           └── prepopulated/
 └── services/
-    ├── __init__.py
     └── excuse_generator/
-        ├── __init__.py
         ├── interface.py
         └── operations/
-            ├── __init__.py
-            └── generate_vague.py
+            └── generate_excuse.py
 
 tests/
 ├── test_models.py
 ├── utilities/
 ├── repositories/
+│   └── excuse_repository/
+│       ├── test_interface.py
+│       ├── test_agent_repository.py      # Test agent implementation
+│       └── test_prepopulated_repository.py  # Test prepopulated implementation
 └── services/
-    ├── __init__.py
-    └── test_excuse_generator/
-      └── operations/
-          └── test_generate_vague.py
+    └── excuse_generator/
+        └── operations/
+            └── test_generate_excuse.py
 ```
 
 - Use Pydantic models for data validation and serialization

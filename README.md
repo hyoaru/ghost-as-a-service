@@ -81,7 +81,7 @@ graph TD
 
 **Core Philosophy:**
 
-- **Command Pattern Everywhere**: Every service, repository, and utility follows a strict Command Pattern implementation. Operations are decoupled from invokers, making every piece of logic independently testable and composable.
+- **Command Pattern for Services & Utilities**: Services and utilities follow a strict Command Pattern implementation. Operations are decoupled from invokers, making every piece of logic independently testable and composable.
 - **Type Safety is Non-Negotiable**: Full type hints throughout. If it doesn't type-check, it doesn't ship.
 - **SOLID or Nothing**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion — these aren't guidelines, they're requirements.
 - **Test-Driven, Always**: Features don't exist until tests exist. 80%+ coverage isn't a goal, it's a baseline.
@@ -189,19 +189,15 @@ ghost-as-a-service/
 │   │           └── generate_excuse.py
 │   ├── repositories/                    # Data access gateways
 │   │   └── excuse_repository/
-│   │       ├── interface.py            # ABCs: RepositoryABC, OperationABC
+│   │       ├── interface.py            # ABC with abstract methods (get_excuse, etc.)
 │   │       ├── exceptions/             # Repository-specific exceptions
 │   │       └── implementations/        # Provider-specific implementations
 │   │           ├── agent/              # AI-powered excuse generation
-│   │           │   ├── __init__.py
-│   │           │   ├── settings.py
-│   │           │   └── operations/
-│   │           │       └── get_excuse.py
+│   │           │   ├── __init__.py     # AgentExcuseRepository.get_excuse() method
+│   │           │   └── settings.py
 │   │           └── prepopulated/       # Static excuse bank
-│   │               ├── __init__.py
-│   │               ├── settings.py
-│   │               └── operations/
-│   │                   └── get_excuse.py
+│   │               ├── __init__.py     # PrepopulatedExcuseRepository.get_excuse() method
+│   │               └── settings.py
 │   └── utilities/                       # Infrastructure wrappers & helpers
 │       └── excuse_agent/
 │           ├── interface.py            # ABCs: AgentABC, OperationABC
@@ -243,7 +239,7 @@ ghost-as-a-service/
 
 ### Design Principles
 
-- **Command Pattern**: Services, repositories, and utilities all implement the Command Pattern with strict contracts
+- **Command Pattern**: Services and utilities implement the Command Pattern with strict contracts
 - **Dependency Injection**: Constructor-based injection with optional defaults for convenience
 - **SOLID Principles**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
 - **Type Safety**: Full type hints with Generic[T] for operation return types
@@ -292,26 +288,57 @@ class ExcuseGeneratorOperationABC(ABC, Generic[T]):
 
 **Purpose**: Abstract data access with provider-specific implementations.
 
-**Pattern**: Repository interface defines contracts, implementations provide provider-specific logic (AWS, Postgres, Mock).
+**Pattern**: Direct methods for data access operations.
 
 ```python
+# app/repositories/excuse_repository/interface.py
+from abc import ABC, abstractmethod
+
+class ExcuseRepositoryABC(ABC):
+    """Repository interface defining data access methods."""
+
+    @abstractmethod
+    async def get_excuse(self, request: str) -> str:
+        """Get an excuse based on the request."""
+        pass
+
 # app/repositories/excuse_repository/implementations/agent/__init__.py
-from ....interface import ExcuseRepositoryABC, ExcuseRepositoryOperationABC
-from ....utilities.excuse_agent import ExcuseAgent
+from app.utilities.excuse_agent import ExcuseAgent
+from app.utilities.excuse_agent.operations import GenerateVague
+from ...interface import ExcuseRepositoryABC
 
 class AgentExcuseRepository(ExcuseRepositoryABC):
     """AI-powered excuse generation via PydanticAI."""
 
-    def __init__(self, agent: ExcuseAgent):
-        self.agent = agent  # Infrastructure dependency
+    def __init__(self, excuse_agent: ExcuseAgent = None):
+        self.excuse_agent = excuse_agent or ExcuseAgent()
 
-    async def execute(self, operation: ExcuseRepositoryOperationABC[T]) -> T:
-        return await operation.execute(self)
+    async def get_excuse(self, request: str) -> str:
+        """Generate excuse using LLM agent."""
+        operation = GenerateVague(request=request)
+        return await self.excuse_agent.execute(operation)
+
+# app/repositories/excuse_repository/implementations/prepopulated/__init__.py
+import random
+from ...interface import ExcuseRepositoryABC
+from .settings import Settings
+
+class PrepopulatedExcuseRepository(ExcuseRepositoryABC):
+    """Static excuse bank."""
+
+    def __init__(self, settings: Settings = None):
+        self.settings = settings or Settings()
+        self.excuses = self.settings.PREPOPULATED_EXCUSES
+
+    async def get_excuse(self, request: str) -> str:
+        """Return random excuse from static list."""
+        return random.choice(self.excuses)
 ```
 
 **Key Rules**:
 
-- Operations perform runtime `isinstance` checks to access provider-specific state
+- Each repository has direct methods (e.g., `get_excuse()`, `save()`, `delete()`)
+- No Command Pattern or operations - just straightforward OOP methods
 - Strictly I/O and data transformation — no business logic
 - Return domain models, not raw API responses
 - Multiple implementations can coexist (agent, prepopulated, etc.)
@@ -545,7 +572,7 @@ The testing approach is as opinionated as the architecture:
 async def test_generate_excuse_success(excuse_generator, mock_excuse_repository):
     # Arrange: Set up test data and mock behavior
     expected_excuse = "I'm swamped with a critical project."
-    mock_excuse_repository.execute.return_value = expected_excuse
+    mock_excuse_repository.get_excuse.return_value = expected_excuse
     operation = GenerateExcuse(request="Help me move?")
 
     # Act: Execute the operation
@@ -553,7 +580,7 @@ async def test_generate_excuse_success(excuse_generator, mock_excuse_repository)
 
     # Assert: Verify the outcome
     assert result == expected_excuse
-    mock_excuse_repository.execute.assert_called_once()
+    mock_excuse_repository.get_excuse.assert_called_once()
 ```
 
 **Test Mirroring**: The `tests/` directory exactly mirrors `app/` structure. Finding tests is never a guessing game.
@@ -645,7 +672,7 @@ This project follows strict architectural patterns. Before contributing:
 
 1. **Read the Standards**:
    - [Core Standards](.github/instructions/core-standards.instructions.md) - Coding style and organization
-   - [Architectural Standards](.github/instructions/architectural-standards.instructions.md) - SOLID principles and Command Pattern
+   - [Architectural Standards](.github/instructions/architectural-standards.instructions.md) - SOLID principles, Command Pattern (Services/Utilities)
    - [Testing Standards](.github/instructions/testing-standards.instructions.md) - TDD approach and test structure
 
 2. **Use the Scaffolding Skills**:
@@ -679,7 +706,7 @@ This project follows strict architectural patterns. Before contributing:
    uv run pytest --cov=app --cov-report=term-missing
    ```
 
-**Philosophy Check**: If your contribution doesn't follow the Command Pattern, uses inheritance instead of composition, or lacks comprehensive tests, it won't be merged. This isn't flexibility — it's intentional rigidity to maintain architectural consistency.
+**Philosophy Check**: If your contribution doesn't follow the architectural patterns (Command Pattern for Services/Utilities), uses inheritance instead of composition, or lacks comprehensive tests, it won't be merged. This isn't flexibility — it's intentional rigidity to maintain architectural consistency.
 
 ---
 
@@ -806,37 +833,41 @@ class GenerateExcuse(ExcuseGeneratorOperationABC[str]):
         self.request = request
 
     async def execute(self, service: ExcuseGeneratorABC) -> str:
-        # Access injected repository through service
-        repo_operation = GetExcuse(request=self.request)
-        excuse = await service.excuse_repository.execute(repo_operation)
+        # Call repository method directly - no operation needed!
+        excuse = await service.excuse_repository.get_excuse(self.request)
         return excuse
 ```
 
 **3. Repository Layer** ([app/repositories/excuse_repository/](app/repositories/excuse_repository/))
 
 ```python
+# interface.py
+class ExcuseRepositoryABC(ABC):
+    @abstractmethod
+    async def get_excuse(self, request: str) -> str:
+        pass
+
 # implementations/agent/__init__.py
 class AgentExcuseRepository(ExcuseRepositoryABC):
     def __init__(self):
-        self.agent = ExcuseAgent()  # Infrastructure dependency
+        self.excuse_agent = ExcuseAgent()  # Infrastructure dependency
 
-    async def execute(self, operation: ExcuseRepositoryOperationABC[T]) -> T:
-        return await operation.execute(self)
-
-# implementations/agent/operations/get_excuse.py
-class GetExcuse(ExcuseRepositoryOperationABC[str]):
-    def __init__(self, request: str):
-        self.request = request
-
-    async def execute(self, repository: ExcuseRepositoryABC) -> str:
-        # Runtime type check (pattern for provider-specific access)
-        if not isinstance(repository, AgentExcuseRepository):
-            raise TypeError("GetExcuse requires AgentExcuseRepository")
-
-        # Access repository's agent
-        agent_operation = GenerateVague(prompt=self.request)
-        excuse = await repository.agent.execute(agent_operation)
+    async def get_excuse(self, request: str) -> str:
+        # Direct implementation - no operation needed
+        agent_operation = GenerateVague(request=request)
+        excuse = await self.excuse_agent.execute(agent_operation)
         return excuse
+
+# implementations/prepopulated/__init__.py
+class PrepopulatedExcuseRepository(ExcuseRepositoryABC):
+    def __init__(self):
+        settings = Settings()
+        self.excuses = settings.PREPOPULATED_EXCUSES
+
+    async def get_excuse(self, request: str) -> str:
+        # Direct implementation - just return random excuse
+        import random
+        return random.choice(self.excuses)
 ```
 
 **4. Utility Layer** ([app/utilities/excuse_agent/](app/utilities/excuse_agent/))
@@ -885,7 +916,7 @@ def mock_repository():
 
 async def test_service(mock_repository):
     service = ExcuseGenerator(excuse_repository=mock_repository)
-    mock_repository.execute.return_value = "test excuse"
+    mock_repository.get_excuse.return_value = "test excuse"
 
     result = await service.execute(GenerateExcuse("help me move"))
     assert result == "test excuse"

@@ -96,14 +96,13 @@ class TaskService(TaskServiceABC):
 **Goal**: Implement the business logic.
 
 1. **Inheritance**: Inherit from <Name>OperationABC[ReturnType].
-2. **Dependency Access**: Use the service argument to access repositories or 3.utilities (e.g., service.repository.execute(...)).
+2. **Dependency Access**: Use the service argument to access repositories or utilities (e.g., `await service.repository.get_by_id(id)`).
 3. **Statelessness**: Store request parameters (like query strings or IDs) in self via **init**, but do not store them in the Service class.
 
 ### Operation Example
 
 ```python
 # app/services/task_service/operations/generate_report.py
-from ...repositories.resource_repository.operations import FetchReport
 from ..interface import TaskOperationABC
 
 class GenerateReport(TaskOperationABC[str]):
@@ -112,7 +111,8 @@ class GenerateReport(TaskOperationABC[str]):
 
     async def execute(self, service) -> str:
         # Service acts as the orchestrator to access the repository
-        payload = await service.repository.execute(FetchReport(self.query))
+        # Call repository method directly
+        payload = await service.repository.get_report(self.query)
 
         # Add business logic/transformation here
         return f"Report generated: {payload}"
